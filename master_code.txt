@@ -1,0 +1,98 @@
+/*
+     master_code.ino
+     AUTOR:   IJPV
+     SKETCH:  Enviando detecção de cor para outro arduino
+     DATA:    04/12/2023
+
+   ATUALIZACAO: em ../../.... por .... o que .......
+*/
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <avr/delay.h>
+
+//Pinos de conexao do modulo
+// Conexao mega
+#define pinS0 8 // C0
+#define pinS1 9 // C1
+#define pinOut 10 // C2
+#define pinS2 12 // C3
+#define pinS3 11 // C4
+
+//Pinos dos LEDs
+#define pinoLedVerm 22
+#define pinoLedVerd 23
+#define pinoLedAzul 24
+
+unsigned int valorVermelho = 0;
+unsigned int valorVerde = 0;
+unsigned int valorAzul = 0;
+unsigned int valorBranco = 0;
+
+void detectaCor();
+void leitura_cores();
+
+void setup() {
+  UBRR0 = 103;
+  //UCSR0A = 0;
+  //UCSR0B = 0b11011000;
+  //UCSR0C = 0b00000110;
+  sei();
+  DDRB = 0x1B;
+
+  //DDRA = 0x07;
+
+  Serial.begin(9600);
+  PORTB = 0x01;
+
+  delay(2000);
+}
+
+void loop() {
+
+  //Detecta a cor
+  leitura_cores();
+
+  delay(100);
+  valorVermelho = (1023-valorVermelho);
+  valorVerde = (1023-valorVerde);
+  valorAzul = (1023-valorAzul);
+  valorBranco = (valorBranco);
+
+  if(valorVerde>valorVermelho && valorVerde>valorVermelho){
+    //PORTA = 0x02;
+    //UDR0 = 'b';
+    Serial.println("C");
+  }
+}
+
+// *********** Função de leitura so sensor de cor ********************
+
+// Rotina que le o valor das cores
+void leitura_cores(){
+
+  digitalWrite(pinS2, LOW); // Pino S2 em nivel baixo
+  digitalWrite(pinS3, LOW); // Pino S3 em nivel baixo
+
+  if(digitalRead(pinOut) == HIGH){ // Verifica o nivel logico no pino OUT do sensor
+    valorVermelho = pulseIn(pinOut, LOW); // Le duracao do pulso na saida
+  } else {
+    valorVermelho = pulseIn(pinOut, HIGH); // Le duracao do pulso na saida
+  }
+
+  digitalWrite(pinS3, HIGH); // PINO S3 em nivel alto
+
+  if(digitalRead(pinOut) == HIGH){ // Verifica o nivel logico no pino OUT do sensor
+    valorAzul = pulseIn(pinOut, LOW); // Le duracao do pulso na saida
+  } else {
+    valorAzul = pulseIn(pinOut, HIGH); // Le duracao do pulso na saida
+  }
+
+  digitalWrite(pinS2, HIGH); // Pino S2 em nivel alto
+
+  if(digitalRead(pinOut) == HIGH){ // Verifica o nivel logico no pino OUT do sensor
+    valorVerde = pulseIn(pinOut, LOW); // Le duracao do pulso na saida
+  } else {
+    valorVerde = pulseIn(pinOut, HIGH); // Le duracao do pulso na saida
+  }
+
+}
