@@ -18,17 +18,12 @@
 #define pinS2 12 // C3
 #define pinS3 11 // C4
 
-//Pinos dos LEDs
-#define pinoLedVerm 22
-#define pinoLedVerd 23
-#define pinoLedAzul 24
-
 unsigned int valorVermelho = 0;
 unsigned int valorVerde = 0;
 unsigned int valorAzul = 0;
 unsigned int valorBranco = 0;
 
-void detectaCor();
+
 void leitura_cores();
 
 void setup() {
@@ -38,8 +33,6 @@ void setup() {
   //UCSR0C = 0b00000110;
   sei();
   DDRB = 0x1B;
-
-  //DDRA = 0x07;
 
   Serial.begin(9600);
   PORTB = 0x01;
@@ -59,8 +52,6 @@ void loop() {
   valorBranco = (valorBranco);
 
   if(valorVerde>valorVermelho && valorVerde>valorVermelho){
-    //PORTA = 0x02;
-    //UDR0 = 'b';
     Serial.println("C");
   }
 }
@@ -70,26 +61,36 @@ void loop() {
 // Rotina que le o valor das cores
 void leitura_cores(){
 
-  digitalWrite(pinS2, LOW); // Pino S2 em nivel baixo
-  digitalWrite(pinS3, LOW); // Pino S3 em nivel baixo
+	/*
+	s0 s1 out s3 s2
+	8  9  10  11 12
+	0  0   0   1  0
+	*/
+  //digitalWrite(pinS2, LOW); // Pino S2 em nivel baixo
+  //digitalWrite(pinS3, LOW); // Pino S3 em nivel baixo
+  
+  PORTB &= 0x07;
 
-  if(digitalRead(pinOut) == HIGH){ // Verifica o nivel logico no pino OUT do sensor
+  //  (digitalRead(pinOut) == HIGH){ // Verifica o nivel logico no pino OUT do sensor
+	if(PINB & (1 << 2)) == (1 << 2){
     valorVermelho = pulseIn(pinOut, LOW); // Le duracao do pulso na saida
   } else {
     valorVermelho = pulseIn(pinOut, HIGH); // Le duracao do pulso na saida
   }
 
-  digitalWrite(pinS3, HIGH); // PINO S3 em nivel alto
+  //digitalWrite(pinS3, HIGH); // PINO S3 em nivel alto
+  PORTB |= 0x08;
 
-  if(digitalRead(pinOut) == HIGH){ // Verifica o nivel logico no pino OUT do sensor
+  if(PINB & (1 << 2)) == (1 << 2){ // Verifica o nivel logico no pino OUT do sensor
     valorAzul = pulseIn(pinOut, LOW); // Le duracao do pulso na saida
   } else {
     valorAzul = pulseIn(pinOut, HIGH); // Le duracao do pulso na saida
   }
 
-  digitalWrite(pinS2, HIGH); // Pino S2 em nivel alto
+  //digitalWrite(pinS2, HIGH); // Pino S2 em nivel alto
+  PORTB |= 0x10;
 
-  if(digitalRead(pinOut) == HIGH){ // Verifica o nivel logico no pino OUT do sensor
+  if(PINB & (1 << 2)) == (1 << 2){ // Verifica o nivel logico no pino OUT do sensor
     valorVerde = pulseIn(pinOut, LOW); // Le duracao do pulso na saida
   } else {
     valorVerde = pulseIn(pinOut, HIGH); // Le duracao do pulso na saida

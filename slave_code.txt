@@ -32,13 +32,10 @@ ISR(USART_RX_vect){
    else if(data == 66){
      PORTB = 0x04;
    }else if(data == 67){
-     //PORTB = 0x08;
      for(char i=0;i<100;i++) servo0graus();
      _delay_ms(3000);
      for(char i=0;i<100;i++) servo90graus();
    }
-  
-  //USART_Transmit(data);
 }
 
 void USART_Transmit(unsigned char data)
@@ -55,11 +52,9 @@ return UDR0; //Lê o dado recebido e retorna
 
 void servo90graus()             //Posiciona o servo em 90 graus
 {
-   //digitalWrite(servo1, HIGH);  //pulso do servo
-   PORTD = 0x80;
+   PORTD = 0x80; //pulso do servo
    delayMicroseconds(1500);     //1.5ms
-   //digitalWrite(servo1, LOW);   //completa periodo do servo
-   PORTD = 0x00;
+   PORTD = 0x00;   //completa periodo do servo
    for(int i=0;i<12;i++)delayMicroseconds(1500);
                                // 20ms = 20000us
                                // 20000us - 1500us = 18500us
@@ -68,14 +63,11 @@ void servo90graus()             //Posiciona o servo em 90 graus
 
 void servo0graus()              //Posiciona o servo em 0 graus
 {
-   //digitalWrite(servo1, HIGH);  //pulso do servo
-   PORTD = 0x80;
+   PORTD = 0x80;   //pulso do servo
    delayMicroseconds(600);      //0.6ms
-   //digitalWrite(servo1, LOW);   //completa periodo do servo
-   PORTD = 0x00;
+   PORTD = 0x00;   //completa periodo do servo
    for(int i=0;i<32;i++)delayMicroseconds(600);
                                // 20ms = 20000us
                                // 20000us - 600us = 19400us
                                // 19400/600 = ~~32
-
 }
